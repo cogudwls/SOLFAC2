@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 기반 재활 운동 도우미</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+    <body>
+        <div id="app" class="app-shell">
+            <!-- SCR-01: 운동 시작 화면 -->
+            <header class="site-header" role="banner">
+                <a href="#scr-01" id="siteHomeLink" class="site-brand">AI 기반 재활 운동 도우미</a>
+                <span class="site-sub">SOLFAC 학생 2팀</span>
+            </header>
+            <section id="scr-01" class="screen active" aria-label="운동 시작 화면">
+
+                <header class="screen-header">
+                    <h1>운동을 선택해주세요.</h1>
+                    <span class="badge">SCR-01</span>
+                </header>
+
+                <!-- 사용자 관리 -->
+    <section class="panel user-panel">
+        <h2>사용자 설정</h2>
+
+        <div class="user-controls">
+            <select id="userSelect" aria-label="사용자 선택">
+                <option value="">사용자를 선택해 주세요.</option>
+            </select>
+
+            <button type="button" id="registerUserBtn"
+                class="secondary-btn">
+                신규 등록
+            </button>
+        </div>
+
+        <label class="consent-row">
+            <input type="checkbox" id="videoConsent" disabled />
+            운동 영상 저장에 동의합니다.
+        </label>
+
+        <button type="button" id="viewHistoryBtn"
+            class="secondary-btn">
+            운동 이력 조회
+        </button>
+
+        <div id="userAlert" class="alert-text"
+            aria-live="polite"></div>
+    </section>
+            <div class="tab-bar" role="tablist">
+                <button type="button" id="tabUpper" class="tab-btn active" role="tab" aria-selected="true">
+                    상체 재활
+                </button>
+                <button type="button" id="tabLower" class="tab-btn" role="tab" aria-selected="false">
+                    하체 재활
+                </button>
+            </div>
+
+            <div id="exerciseCardGrid" class="exercise-grid"></div>
+
+            <div id="framingGuideBox" class="guide-banner" role="status">
+                상반신이 화면 중앙에 오도록 1.5m ~ 2.5m 거리를 유지해 주세요.
+            </div>
+
+            <div id="scr01Alert" class="alert-text" aria-live="polite"></div>
+
+            <button type="button" id="startWorkoutBtn" class="primary-btn full-btn">
+                운동 시작하기
+            </button>
+        </section>
+
+        <!-- SCR-02: 운동 진행 화면 -->
+        <section id="scr-02" class="screen" aria-label="운동 진행 화면">
+            <header class="screen-header">
+                <div>
+                    <h1 id="activeExerciseTitle">팔꿈치 굽혔다 펴기</h1>
+                    <small id="sessionIdLabel" class="muted"></small>
+                </div>
+                <span class="badge">SCR-02</span>
+            </header>
+
+            <div class="workout-grid">
+                <aside class="panel guide-panel">
+                    <h2>운동 방법 안내</h2>
+                    <div id="guideVisual" class="demo-frame"><video id="demoVideo" muted loop playsinline controls></video></div><p class="demo-caption">동작 시범 · 반복 재생 (일러스트)</p>
+                    <ul id="guideSteps" class="guide-steps"></ul>
+                </aside>
+
+                <div class="panel camera-panel">
+                    <h2>카메라 영상</h2>
+                    <div class="video-frame">
+                        <video id="webcamVideo" autoplay playsinline muted></video>
+                        <canvas id="skeletonCanvas" class="skeleton-overlay"></canvas>
+                        
+                    </div>
+                    <div id="cameraErrorBox" class="error-box hidden"></div>
+                </div>
+            </div>
+
+            <div class="bottom-bar">
+                <div class="panel status-panel">
+                    <h2>측정 상태</h2>
+                    <div class="metrics-row">
+                        <div class="metric-item">
+                            <span class="metric-label">정자세 횟수</span>
+                            <strong id="repCountDisplay" class="metric-value">0회</strong>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">전체 횟수</span><strong id="totalRepDisplay" class="metric-value">0회</strong></div><div class="metric-item"><span class="metric-label">경과 시간</span>
+                            <strong id="elapsedTimeDisplay" class="metric-value">0초</strong>
+                        </div>
+                    </div>
+                    <strong id="feedbackStatus" class="feedback-status">운동 안내</strong><div id="postureFeedbackDisplay" class="feedback-box" aria-live="polite">
+                        상반신이 화면 안에 들어오도록 위치를 조정해 주세요.
+                    </div>
+                    <div class="dev-sim-controls">
+                        <button type="button" id="simNormalBtn" class="chip-btn">정상 동작 +1</button>
+                        <button type="button" id="simMispostureBtn" class="chip-btn">오자세 피드백 테스트</button>
+                        <button type="button" id="retryCamBtn" class="chip-btn">카메라 재연결</button>
+                    </div>
+                </div>
+
+                <button type="button" id="finishWorkoutBtn" class="danger-btn finish-btn">
+                    운동 종료
+                </button>
+            </div>
+            <div id="saveErrorBox" class="error-box hidden"></div>
+        </section>
+
+        <!-- SCR-03: 결과·이력 화면 -->
+        <section id="scr-03" class="screen" aria-label="결과·이력 화면">
+            <header class="screen-header">
+                <div class="header-left">
+                    <h1>결과·이력</h1>
+                    <span class="badge">SCR-03</span>
+                </div>
+                <button type="button" id="returnHomeBtn" class="secondary-btn">
+                    돌아가기
+                </button>
+            </header>
+
+            <section class="panel summary-panel">
+                <h2>방금 완료한 운동 요약</h2>
+                <div id="latestSummaryContent" class="summary-card"></div>
+            </section>
+
+            <section class="panel history-panel">
+                <h2>운동 이력 조회</h2>
+                <div id="emptyHistoryMsg" class="empty-box hidden">
+                    조회할 운동 이력이 없습니다.
+                </div>
+                <div class="table-wrap">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>날짜 및 시간</th>
+                                <th>운동 이름</th>
+                                <th>총 수행 시간</th>
+                                <th>정자세 수행 횟수</th>
+                                <th>자세 분석 결과</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
